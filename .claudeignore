@@ -1,0 +1,35 @@
+# ==============================================================================
+# ARCHIVO .CLAUDEIGNORE
+# ==============================================================================
+
+# --- Entornos Virtuales y Dependencias de Python ---
+.venv/
+venv/
+env/
+ENV/
+dist/
+build/
+*.egg-info/
+
+# --- Caché y Archivos Temporales de Python ---
+**/__pycache__/
+*.py[cod]
+*\$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+
+# --- Archivos de Configuración del IDE y Sistema ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Secretos y Credenciales ---
+.env
+.env.*
+*.pem
+*.key
