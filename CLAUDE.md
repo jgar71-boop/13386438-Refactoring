@@ -44,16 +44,18 @@ error de conversión y `2` si faltan argumentos.
 - Usar nombres descriptivos en `snake_case` para funciones y variables, y
 	`UPPER_SNAKE_CASE` para constantes. Añadir anotaciones de tipos a funciones
 	nuevas o modificadas.
-- Rechazar entradas numéricas no finitas (`NaN`, `inf`, `-inf`) antes de aplicar
-	límites físicos. Usar `ValueError` para valores no válidos y conservar el
-	comportamiento de error para claves de conversión desconocidas.
+- En `convertir()`, rechazar entradas no finitas (`NaN`, `inf`, `-inf`) antes de
+	ejecutar la conversión y rechazar resultados no finitos antes del redondeo.
+	Usar `ValueError` para valores inválidos y `KeyError` para claves desconocidas.
 - No imprimir desde las funciones de conversión. La CLI debe encargarse de los
-	mensajes y escribir errores en `stderr`.
+	mensajes, escribir errores en `stderr` y mostrar el mensaje original de la
+	excepción sin manipular su representación. Mantener los códigos de salida:
+	`0` para éxito, `1` para errores de conversión y `2` para argumentos faltantes.
 - Mantener el redondeo de salida centralizado en `convertir()` salvo que se
 	actualice explícitamente el contrato y sus pruebas.
 - Añadir pruebas pytest para conversiones nuevas, valores conocidos, límites,
-	entradas inválidas y claves desconocidas. Para cambios en la CLI, comprobar
-	también la salida y el código de retorno.
+  negativos, valores no finitos, overflow y claves desconocidas. Para cambios en
+  la CLI, comprobar también el mensaje en `stderr` y el código de retorno.
 - Preferir la biblioteca estándar; si se añade una dependencia externa,
 	declararla en `requirements.txt`.
 - Mantener los cambios acotados al comportamiento solicitado y no editar el

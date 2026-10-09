@@ -4,23 +4,24 @@
 
 import argparse
 import sys
+from typing import Optional, Sequence
 
 from conversor import CONVERSIONES, convertir
 
 
-def construir_parser():
+def construir_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="conversor",
         description="Conversor de unidades de línea de comandos",
     )
     parser.add_argument(
-        "valor",
+        "valor_entrada",
         nargs="?",
         type=float,
         help="Valor numérico a convertir",
     )
     parser.add_argument(
-        "clave",
+        "clave_conversion",
         nargs="?",
         help="Clave de conversión (ej. c2f, km2mi). Usa --listar para verlas todas",
     )
@@ -32,35 +33,46 @@ def construir_parser():
     return parser
 
 
-def listar_conversiones():
+def listar_conversiones() -> None:
     # Imprime la tabla de conversiones disponibles
     print("Conversiones disponibles:")
-    for clave, (_, descripcion) in sorted(CONVERSIONES.items()):
-        print(f"  {clave:8s} {descripcion}")
+    conversiones_ordenadas = sorted(CONVERSIONES.items())
+    for clave_conversion, (_, descripcion_conversion) in conversiones_ordenadas:
+        print(f"  {clave_conversion:8s} {descripcion_conversion}")
 
 
-def main(argv=None):
+def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = construir_parser()
-    args = parser.parse_args(argv)
+    argumentos_cli = parser.parse_args(argv)
 
-    if args.listar:
+    if argumentos_cli.listar:
         listar_conversiones()
         return 0
 
     # Sin --listar se requieren ambos argumentos posicionales
-    if args.valor is None or args.clave is None:
+    if (
+        argumentos_cli.valor_entrada is None
+        or argumentos_cli.clave_conversion is None
+    ):
         parser.print_usage()
         print("Error: se requieren VALOR y CLAVE (o usa --listar)", file=sys.stderr)
         return 2
 
     try:
-        resultado = convertir(args.valor, args.clave)
-    except (ValueError, KeyError) as error:
-        # KeyError envuelve el mensaje entre comillas; lo limpiamos para el usuario
-        print(f"Error: {str(error).strip(chr(39))}", file=sys.stderr)
+        valor_convertido = convertir(
+            argumentos_cli.valor_entrada,
+            argumentos_cli.clave_conversion,
+        )
+    except (ValueError, KeyError) as error_conversion:
+        mensaje_error = (
+            error_conversion.args[0]
+            if isinstance(error_conversion, KeyError)
+            else str(error_conversion)
+        )
+        print(f"Error: {mensaje_error}", file=sys.stderr)
         return 1
 
-    print(resultado)
+    print(valor_convertido)
     return 0
 
 
